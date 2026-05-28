@@ -1,1 +1,144 @@
+<!DOCTYPE>
+<html>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agrinho 2026 + Moda Sustentável</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(#87ceeb, #98fb98);
+    overflow: hidden;
+  }
+  #info {
+    text-align: center;
+    background: #2f4f2f;
+    color: #fff;
+    padding: 10px;
+    font-size: 20px;
+  }
+  canvas {
+    display: block;
+    margin: auto;
+    background: #7ec850;
+    border: 4px solid #2f4f2f;
+  }
+</style>
+</head>
+<body>
 
+<div id="info">
+  🌱 Agrinho 2026 + Moda Sustentável 👗 |
+  Pontos: <span id="score">0</span>
+</div>
+
+<canvas id="gameCanvas" width="800" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let score = 0;
+
+// Jogador: trator fashionista
+const player = { x: 100, y: 220, width: 50, height: 50, color: "#1e90ff", speed: 5 };
+
+// Itens que caem
+const items = [];
+const itemTypes = [
+  { type: "lixo", icon: "🗑", color: "red", points: -5 },
+  { type: "reciclavel", icon: "♻", color: "yellow", points: 10 },
+  { type: "árvore", icon: "🌳", color: "green", points: 15 },
+  { type: "moda_sustentavel", icon: "👗", color: "pink", points: 20 },
+  { type: "moda_poluente", icon: "👕", color: "gray", points: -10 }
+];
+
+// Cria itens aleatórios
+function createItem() {
+  const randomType = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+  items.push({
+    x: Math.random() * (canvas.width - 30),
+    y: -30,
+    width: 30,
+    height: 30,
+    color: randomType.color,
+    points: randomType.points,
+    type: randomType.type,
+    icon: randomType.icon,
+    speed: 2 + Math.random() * 3
+  });
+}
+
+// Desenha o jogador
+function drawPlayer() {
+  ctx.fillStyle = player.color;
+  ctx.fillRect(player.x, player.y, player.width, player.height);
+  ctx.fillStyle = "white";
+  ctx.font = "24px Arial";
+  ctx.fillText("🚜", player.x + 5, player.y + 35);
+}
+
+// Desenha os itens
+function drawItems() {
+  items.forEach(item => {
+    ctx.fillStyle = item.color;
+    ctx.fillRect(item.x, item.y, item.width, item.height);
+    ctx.fillStyle = "black";
+    ctx.font = "18px Arial";
+    ctx.fillText(item.icon, item.x + 2, item.y + 22);
+  });
+}
+
+// Atualiza itens e pontuação
+function updateItems() {
+  for(let i = items.length -1; i >= 0; i--) {
+    items[i].y += items[i].speed;
+
+    if(player.x < items[i].x + items[i].width &&
+       player.x + player.width > items[i].x &&
+       player.y < items[i].y + items[i].height &&
+       player.y + player.height > items[i].y
+    ) {
+      score += items[i].points;
+      if(score < 0) score = 0;
+      document.getElementById("score").textContent = score;
+      items.splice(i,1);
+    } else if(items[i].y > canvas.height) {
+      items.splice(i,1);
+    }
+  }
+}
+
+// Loop do jogo
+function gameLoop() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawPlayer();
+  drawItems();
+  updateItems();
+  requestAnimationFrame(gameLoop);
+}
+
+// Controles
+const keys = {};
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
+
+function movePlayer() {
+  if(keys["ArrowUp"] && player.y>0) player.y -= player.speed;
+  if(keys["ArrowDown"] && player.y < canvas.height - player.height) player.y += player.speed;
+  if(keys["ArrowLeft"] && player.x>0) player.x -= player.speed;
+  if(keys["ArrowRight"] && player.x < canvas.width - player.width) player.x += player.speed;
+}
+
+// Inicializa o jogo
+setInterval(createItem, 1000);
+setInterval(movePlayer,16);
+gameLoop();
+</script>
+
+</body>
+</html>
+</html>
