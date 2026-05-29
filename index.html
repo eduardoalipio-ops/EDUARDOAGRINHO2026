@@ -1,152 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Defensor da Natureza</title>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #a8e6cf, #dcedc1);
-    overflow: hidden;
-  }
-
-  h1 {
-    text-align: center;
-    color: #2E7D32;
-  }
-
-  #gameCanvas {
-    display: block;
-    margin: 0 auto;
-    background: #81c784;
-    border: 4px solid #2E7D32;
-    border-radius: 12px;
-  }
-
-  #score {
-    text-align: center;
-    font-size: 20px;
-    color: #2E7D32;
-    margin: 10px 0;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defensor da Natureza - Agrinho 2026</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Defensor da Natureza 🌱</h1>
-<div id="score">Pontuação: 0</div>
-<canvas id="gameCanvas" width="800" height="400"></canvas>
+    <div id="game-container">
+        <div id="hud">
+            <div>Pontos: <span id="score">0</span></div>
+            <div>Vidas: <span id="lives">3</span></div>
+        </div>
 
-<script>
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
+        <div id="start-screen" class="overlay">
+            <h1>Defensor da Natureza</h1>
+            <p>Agrinho 2026: Proteja o nosso ecossistema!</p>
+            <p>Clique nas ameaças (lixo, fumaça) antes que elas toquem o solo.</p>
+            <button id="start-btn">Iniciar Missão</button>
+        </div>
 
-  const árvores = [{x: 50, y: 150}, {x: 50, y: 300}];
-  const sementes = [];
-  const poluicao = [];
-  let score = 0;
-  let gameOver = false;
+        <div id="game-over-screen" class="overlay hidden">
+            <h1>Fim de Jogo!</h1>
+            <p>Você defendeu a natureza o máximo que pôde.</p>
+            <p>Pontuação Final: <span id="final-score">0</span></p>
+            <button id="restart-btn">Jogar Novamente</button>
+        </div>
 
-  // Criar poluição
-  function spawnPoluicao() {
-    const y = Math.random() > 0.5 ? 150 : 300;
-    poluicao.push({x: canvas.width, y: y, width: 40, height: 40, speed: 2});
-  }
+        <div id="sky"></div>
+        <div id="ground"></div>
+    </div>
 
-  // Desenhar árvores
-  function drawArvores() {
-    ctx.fillStyle = "#2E7D32";
-    árvores.forEach(arv => {
-      ctx.fillRect(arv.x, arv.y, 40, 40);
-      ctx.fillStyle = "#4CAF50";
-      ctx.beginPath();
-      ctx.arc(arv.x + 20, arv.y, 30, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#2E7D32";
-    });
-  }
-
-  // Desenhar sementes
-  function drawSementes() {
-    ctx.fillStyle = "#FFEB3B";
-    sementes.forEach((s, i) => {
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, 8, 0, Math.PI * 2);
-      ctx.fill();
-      s.x += s.speed;
-
-      // Colisão com poluição
-      poluicao.forEach((p, j) => {
-        if (s.x > p.x && s.x < p.x + p.width && s.y > p.y && s.y < p.y + p.height) {
-          poluicao.splice(j, 1);
-          sementes.splice(i, 1);
-          score += 10;
-        }
-      });
-
-      // Remover sementes fora do canvas
-      if (s.x > canvas.width) sementes.splice(i, 1);
-    });
-  }
-
-  // Desenhar poluição
-  function drawPoluicao() {
-    ctx.fillStyle = "#616161";
-    poluicao.forEach((p, i) => {
-      ctx.fillRect(p.x, p.y, p.width, p.height);
-      p.x -= p.speed;
-
-      // Chegou no final => game over
-      if (p.x < 0) gameOver = true;
-    });
-  }
-
-  // Atualizar canvas
-  function update() {
-    if (gameOver) {
-      ctx.fillStyle = "rgba(0,0,0,0.5)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "white";
-      ctx.font = "40px Arial";
-      ctx.fillText("Game Over 🌱", canvas.width/2 - 120, canvas.height/2);
-      ctx.font = "25px Arial";
-      ctx.fillText(`Pontuação Final: ${score}`, canvas.width/2 - 90, canvas.height/2 + 40);
-      return;
-    }
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawArvores();
-    drawSementes();
-    drawPoluicao();
-
-    document.getElementById('score').innerText = `Pontuação: ${score}`;
-
-    requestAnimationFrame(update);
-  }
-
-  // Atirar sementes
-  canvas.addEventListener('click', function(event){
-    const rect = canvas.getBoundingClientRect();
-    const mouseY = event.clientY - rect.top;
-
-    // Escolhe árvore mais próxima verticalmente
-    let arvoreEscolhida = árvores[0];
-    if (Math.abs(mouseY - árvores[1].y) < Math.abs(mouseY - árvores[0].y)) {
-      arvoreEscolhida = árvores[1];
-    }
-
-    sementes.push({x: arvoreEscolhida.x + 40, y: arvoreEscolhida.y + 20, speed: 5});
-  });
-
-  // Gerar poluição a cada 2 segundos
-  setInterval(() => {
-    if (!gameOver) spawnPoluicao();
-  }, 2000);
-
-  update();
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
