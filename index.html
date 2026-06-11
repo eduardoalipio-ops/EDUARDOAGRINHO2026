@@ -3,34 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Defensor da Natureza - Agrinho 2026</title>
+    <title>Agrinho 2026</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header>
+        <h1>Agrinho 2026 🌱</h1>
+        <p>Descubra a magia da agricultura sustentável!</p>
+    </header>
 
-    <div id="game-container">
-        <div id="hud">
-            <div>Pontos: <span id="score">0</span></div>
-            <div>Vidas: <span id="lives">3</span></div>
-        </div>
+    <main>
+        <section class="garden">
+            <h2>Plante sua própria fazenda digital</h2>
+            <div class="plot">
+                <div class="soil" data-plant="wheat"></div>
+                <div class="soil" data-plant="corn"></div>
+                <div class="soil" data-plant="carrot"></div>
+            </div>
+            <button id="rainButton">Chover ☔</button>
+        </section>
 
-        <div id="start-screen" class="overlay">
-            <h1>Defensor da Natureza</h1>
-            <p>Agrinho 2026: Proteja o nosso ecossistema!</p>
-            <p>Clique nas ameaças (lixo, fumaça) antes que elas toquem o solo.</p>
-            <button id="start-btn">Iniciar Missão</button>
-        </div>
+        <section class="info">
+            <h2>Informações sobre suas plantas</h2>
+            <ul id="plantStatus"></ul>
+        </section>
+    </main>
 
-        <div id="game-over-screen" class="overlay hidden">
-            <h1>Fim de Jogo!</h1>
-            <p>Você defendeu a natureza o máximo que pôde.</p>
-            <p>Pontuação Final: <span id="final-score">0</span></p>
-            <button id="restart-btn">Jogar Novamente</button>
-        </div>
-
-        <div id="sky"></div>
-        <div id="ground"></div>
-    </div>
+    <footer>
+        <p>Projeto inspirado no Agrinho 2026 - Criatividade e sustentabilidade na palma da sua mão!</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
